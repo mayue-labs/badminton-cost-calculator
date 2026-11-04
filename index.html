@@ -200,6 +200,9 @@
   .section-title, .bill-group-label { font-size: 12px; line-height: 18px; margin: 0 0 10px; }
   .bill-section { border-bottom: 1px dashed #d5d2c9; }
   .income-section { border-bottom: 0; }
+  .line.summary { padding: 0; margin: 0 0 10px; font-size: 12px; line-height: 18px; font-weight: 600; color: #343b32; }
+  .line.summary::after { border-bottom: 0; }
+  .line.summary span:last-child { font-weight: 700; font-size: 13px; }
   .profit-box { margin-top: 18px; }
   @media (min-width: 781px) {
     .wrap { grid-template-rows: auto auto auto auto; }
@@ -288,16 +291,14 @@
     </div>
 
     <section class="bill-section cost-section">
-    <div class="bill-group-label">成本</div>
+    <div class="line summary"><span>总成本</span><span id="cost">¥0</span></div>
     <div class="line"><span>场地费</span><span id="siteTotal">¥0</span></div>
     <div class="line"><span>羽毛球费用</span><span id="ballTotal">¥0</span></div>
     <div class="line"><span>其他费用</span><span id="otherTotal">¥0</span></div>
-    <div class="line total"><span>总成本</span><span id="cost">¥0</span></div>
 
     </section>
     <section class="bill-section income-section">
-    <div class="bill-group-label">收入</div>
-    <div class="line"><span>总收入</span><span id="income">¥0</span></div>
+    <div class="line summary"><span>总收入</span><span id="income">¥0</span></div>
     <div class="line sub-line"><span>男生收入</span><span id="boyIncome">¥0</span></div>
     <div class="line sub-line"><span>女生收入</span><span id="girlIncome">¥0</span></div>
 
