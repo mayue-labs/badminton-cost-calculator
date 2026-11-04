@@ -30,22 +30,41 @@
     max-width: 900px;
     display: grid;
     grid-template-columns: 1.15fr 1fr;
-    gap: 20px;
+    gap: 0;
     align-items: stretch;
+    border-radius: 18px;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, .35);
   }
 
   .panel {
     background: #fff;
-    border-radius: 18px;
-    padding: 24px;
-    /* 深色背景上加深阴影，突出卡片 */
-    box-shadow: 0 20px 50px rgba(0, 0, 0, .5);
+    padding: 28px;
+    min-width: 0;
+  }
+  .panel:first-child {
+    border-radius: 18px 0 0 18px;
+    border-right: 1px dashed #d5d2c9;
   }
 
-  /* 右侧账单卡片用纵向 flex，方便把提示沉到底部 */
   .panel.bill {
+    position: relative;
     display: flex;
     flex-direction: column;
+    background: #fffdf7;
+    border-radius: 0 18px 0 0;
+    padding: 28px 30px 24px;
+  }
+  .bill::after {
+    content: '';
+    position: absolute;
+    bottom: -8px;
+    left: 0;
+    right: 0;
+    height: 8px;
+    background: linear-gradient(135deg, #fffdf7 25%, transparent 25%) -8px 0,
+                linear-gradient(225deg, #fffdf7 25%, transparent 25%) -8px 0;
+    background-size: 16px 16px;
+    pointer-events: none;
   }
 
   h1 { font-size: 19px; margin: 0 0 4px; color: #1f2937; }
@@ -91,72 +110,80 @@
     margin: 4px 0 10px;
   }
 
-  /* 账单区 */
-  .bill-title {
-    font-size: 15px;
-    font-weight: 700;
-    color: #1f2937;
-    margin: 0 0 4px;
+  /* 小票账单 */
+  .bill-header {
+    text-align: center;
+    border-bottom: 1px dashed #d5d2c9;
+    padding-bottom: 20px;
+    margin-bottom: 5px;
   }
-  .bill-sub {
-    font-size: 12px;
-    color: #9ca3af;
-    margin-bottom: 16px;
+  .bill-eyebrow {
+    font-size: 9px;
+    letter-spacing: 3px;
+    color: #99958b;
+    margin-bottom: 9px;
   }
+  .bill-title { font-size: 21px; font-weight: 650; letter-spacing: 3px; color: #30392f; margin-bottom: 7px; }
+  .bill-sub { font-size: 11px; color: #99958b; letter-spacing: 1px; }
   .bill-group-label {
-    font-size: 11.5px;
+    font-size: 11px;
     font-weight: 600;
-    color: var(--court-green);
-    letter-spacing: .5px;
-    margin: 14px 0 6px;
+    color: #8b887e;
+    letter-spacing: 2px;
+    margin: 18px 0 8px;
   }
-  .bill-group-label:first-of-type { margin-top: 0; }
-
   .line {
     display: flex;
-    justify-content: space-between;
-    font-size: 14px;
-    color: #6b7280;
-    padding: 5px 0;
+    align-items: baseline;
+    gap: 12px;
+    font-size: 13px;
+    color: #65675f;
+    padding: 6px 0;
   }
-  .line span:last-child { color: #374151; font-weight: 500; }
-  .line.sub-line { font-size: 13px; color: #9ca3af; }
-  .line.sub-line span:last-child { font-weight: 400; color: #6b7280; }
-  .line.total {
-    border-top: 1px solid #f0f1f4;
-    margin-top: 6px;
-    padding-top: 10px;
-    color: #374151;
-    font-weight: 600;
+  .line::after { content: ''; flex: 1; border-bottom: 1px dotted #e2dfd5; }
+  .line span:first-child { order: 0; }
+  .line::after { order: 1; }
+  .line span:last-child {
+    order: 2;
+    color: #343b32;
+    font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', monospace;
+    font-variant-numeric: tabular-nums;
+    font-weight: 500;
+    overflow-wrap: anywhere;
+    text-align: right;
+    min-width: 0;
   }
+  .line.sub-line { font-size: 12px; color: #99958b; }
+  .line.sub-line span:last-child { font-weight: 400; color: #88877f; }
+  .line.total { border-top: 1px dashed #d5d2c9; margin-top: 9px; padding-top: 13px; color: #343b32; font-weight: 600; }
+  .line.total::after { border: 0; }
   .line.total span:last-child { font-weight: 700; }
-  .divider { border: none; border-top: 1px dashed #e5e7eb; margin: 12px 0; }
-
+  .divider { width: 100%; border: none; border-top: 1px dashed #d5d2c9; margin: 14px 0 0; }
   .profit-box {
-    margin-top: 16px;
-    border-radius: 12px;
-    padding: 16px;
+    margin-top: 18px;
+    padding: 16px 0;
+    border-top: 2px solid #414b3f;
+    border-bottom: 1px dashed #d5d2c9;
     display: flex;
+    gap: 14px;
     justify-content: space-between;
     align-items: center;
-    background: #ecfdf5;
-    transition: .2s;
   }
-  .profit-box.loss { background: #fef2f2; }
-  .profit-box .label { font-size: 15px; color: #047857; font-weight: 600; }
-  .profit-box.loss .label { color: #b91c1c; }
-  .profit-box .value { font-size: 24px; font-weight: 700; color: #059669; }
-  .profit-box.loss .value { color: #dc2626; }
-
-  /* 提示沉到卡片底部，使右侧内容在等高时分布自然 */
-  .tip {
-    margin-top: auto;
-    padding-top: 12px;
-    font-size: 12.5px;
-    color: #9ca3af;
-    text-align: center;
-    line-height: 1.6;
+  .profit-box .label { font-size: 13px; color: #465342; font-weight: 600; }
+  .profit-box .value {
+    font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', monospace;
+    font-variant-numeric: tabular-nums;
+    font-size: 28px;
+    font-weight: 700;
+    letter-spacing: -1px;
+    color: var(--court-green);
+    overflow-wrap: anywhere;
+    text-align: right;
+    min-width: 0;
   }
+  .profit-box.loss .label { color: #a3493e; }
+  .profit-box.loss .value { color: #b94f42; }
+  .tip { margin-top: auto; padding-top: 18px; font-size: 11px; color: #99958b; text-align: center; line-height: 1.8; }
 
   /* 窄屏：左右变上下，恢复按内容高度 */
   @media (max-width: 780px) {
@@ -166,9 +193,14 @@
       align-items: start;
     }
   }
+  @media (max-width: 780px) {
+    .panel:first-child { border-right: 0; border-bottom: 1px dashed #d5d2c9; border-radius: 18px 18px 0 0; }
+    .panel.bill { border-radius: 0; }
+  }
   /* 输入框在小屏折成 2 列 */
   @media (max-width: 520px) {
     .row { grid-template-columns: 1fr 1fr; }
+    .panel, .panel.bill { padding: 24px 20px; }
   }
 </style>
 </head>
@@ -232,8 +264,11 @@
 
   <!-- ===== 右：账单区 ===== -->
   <div class="panel bill">
-    <div class="bill-title">活动账单</div>
-    <div class="bill-sub">根据左侧输入实时计算</div>
+    <div class="bill-header">
+      <div class="bill-eyebrow">BADMINTON · RECEIPT</div>
+      <div class="bill-title">活动账单</div>
+      <div class="bill-sub">收支明细 · 实时结算</div>
+    </div>
 
     <div class="bill-group-label">收入</div>
     <div class="line"><span>总收入</span><span id="income">¥0</span></div>
