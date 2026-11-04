@@ -199,7 +199,7 @@
   .input-section, .bill-section { padding-top: 18px; padding-bottom: 12px; min-width: 0; }
   .section-title, .bill-group-label { font-size: 12px; line-height: 18px; margin: 0 0 10px; }
   .bill-section { border-bottom: 1px dashed #d5d2c9; }
-  .cost-section { border-bottom: 0; }
+  .income-section { border-bottom: 0; }
   .profit-box { margin-top: 18px; }
   @media (min-width: 781px) {
     .wrap { grid-template-rows: auto auto auto auto; }
@@ -207,8 +207,8 @@
     .panel:first-child { grid-column: 1; }
     .panel.bill { grid-column: 2; }
     .input-header, .bill-header { grid-row: 1; }
-    .input-section:nth-of-type(1), .income-section { grid-row: 2; }
-    .input-section:nth-of-type(2), .cost-section { grid-row: 3; }
+    .input-section:nth-of-type(1), .cost-section { grid-row: 2; }
+    .input-section:nth-of-type(2), .income-section { grid-row: 3; }
     .bill-footer { grid-row: 4; }
   }
   @media (max-width: 780px) {
@@ -287,14 +287,6 @@
       <div class="bill-sub">收支明细 · 实时结算</div>
     </div>
 
-    <section class="bill-section income-section">
-    <div class="bill-group-label">收入</div>
-    <div class="line"><span>总收入</span><span id="income">¥0</span></div>
-    <div class="line sub-line"><span>男生收入</span><span id="boyIncome">¥0</span></div>
-    <div class="line sub-line"><span>女生收入</span><span id="girlIncome">¥0</span></div>
-
-    </section>
-
     <section class="bill-section cost-section">
     <div class="bill-group-label">成本</div>
     <div class="line"><span>场地费</span><span id="siteTotal">¥0</span></div>
@@ -303,6 +295,14 @@
     <div class="line total"><span>总成本</span><span id="cost">¥0</span></div>
 
     </section>
+    <section class="bill-section income-section">
+    <div class="bill-group-label">收入</div>
+    <div class="line"><span>总收入</span><span id="income">¥0</span></div>
+    <div class="line sub-line"><span>男生收入</span><span id="boyIncome">¥0</span></div>
+    <div class="line sub-line"><span>女生收入</span><span id="girlIncome">¥0</span></div>
+
+    </section>
+
     <div class="bill-footer">
     <div class="profit-box" id="profitBox">
       <span class="label" id="profitLabel">净利润</span>
