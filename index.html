@@ -213,6 +213,10 @@
     .input-section:nth-of-type(1), .cost-section { grid-row: 2; }
     .input-section:nth-of-type(2), .income-section { grid-row: 3; }
     .bill-footer { grid-row: 4; }
+    /* 跳过左侧分组标题的 18px 行高与 10px 间距，首条明细对齐输入标签。 */
+    .input-section label { line-height: 18px; }
+    .bill-section { padding-top: 46px; }
+    .bill-section > .line:first-child { padding-top: 0; font-size: 12px; line-height: 18px; }
   }
   @media (max-width: 780px) {
     .panel.bill { border-radius: 0 0 18px 18px; }
