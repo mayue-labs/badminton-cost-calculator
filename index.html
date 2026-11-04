@@ -51,20 +51,8 @@
     display: flex;
     flex-direction: column;
     background: #fffdf7;
-    border-radius: 0 18px 0 0;
+    border-radius: 0 18px 18px 0;
     padding: 28px 30px 24px;
-  }
-  .bill::after {
-    content: '';
-    position: absolute;
-    bottom: -8px;
-    left: 0;
-    right: 0;
-    height: 8px;
-    background: linear-gradient(135deg, #fffdf7 25%, transparent 25%) -8px 0,
-                linear-gradient(225deg, #fffdf7 25%, transparent 25%) -8px 0;
-    background-size: 16px 16px;
-    pointer-events: none;
   }
 
   h1 { font-size: 19px; margin: 0 0 4px; color: #1f2937; }
@@ -202,6 +190,30 @@
     .row { grid-template-columns: 1fr 1fr; }
     .panel, .panel.bill { padding: 24px 20px; }
   }
+
+  /* 共用行轨道，使两侧标题及两组内容始终对齐。 */
+  h1, .bill-title { font-size: 19px; line-height: 1.4; margin: 0 0 6px; }
+  .sub, .bill-sub { font-size: 12px; line-height: 20px; margin: 0; }
+  .input-header, .bill-header { padding-bottom: 18px; margin: 0; }
+  .input-header { border-bottom: 1px solid transparent; }
+  .input-section, .bill-section { padding-top: 18px; padding-bottom: 12px; min-width: 0; }
+  .section-title, .bill-group-label { font-size: 12px; line-height: 18px; margin: 0 0 10px; }
+  .bill-section { border-bottom: 1px dashed #d5d2c9; }
+  .cost-section { border-bottom: 0; }
+  .profit-box { margin-top: 18px; }
+  @media (min-width: 781px) {
+    .wrap { grid-template-rows: auto auto auto auto; }
+    .panel, .panel.bill { display: grid; grid-template-rows: subgrid; grid-row: 1 / span 4; padding: 28px; }
+    .panel:first-child { grid-column: 1; }
+    .panel.bill { grid-column: 2; }
+    .input-header, .bill-header { grid-row: 1; }
+    .input-section:nth-of-type(1), .income-section { grid-row: 2; }
+    .input-section:nth-of-type(2), .cost-section { grid-row: 3; }
+    .bill-footer { grid-row: 4; }
+  }
+  @media (max-width: 780px) {
+    .panel.bill { border-radius: 0 0 18px 18px; }
+  }
 </style>
 </head>
 <body>
@@ -209,9 +221,12 @@
 
   <!-- ===== 左：输入区 ===== -->
   <div class="panel">
+    <div class="input-header">
     <h1>羽毛球活动盈亏计算器</h1>
     <div class="sub">输入数字，右侧自动生成账单；自动记住本次填写</div>
+    </div>
 
+    <section class="input-section">
     <div class="section-title">场地与用球</div>
     <div class="row">
       <div class="field">
@@ -239,6 +254,8 @@
       </div>
     </div>
 
+    </section>
+    <section class="input-section">
     <div class="section-title">收费与人数</div>
     <div class="row">
       <div class="field">
@@ -260,35 +277,40 @@
         <input type="number" id="girlPrice" value="40" min="0" step="1">
       </div>
     </div>
+    </section>
   </div>
 
   <!-- ===== 右：账单区 ===== -->
   <div class="panel bill">
     <div class="bill-header">
-      <div class="bill-eyebrow">BADMINTON · RECEIPT</div>
       <div class="bill-title">活动账单</div>
       <div class="bill-sub">收支明细 · 实时结算</div>
     </div>
 
+    <section class="bill-section income-section">
     <div class="bill-group-label">收入</div>
     <div class="line"><span>总收入</span><span id="income">¥0</span></div>
     <div class="line sub-line"><span>男生收入</span><span id="boyIncome">¥0</span></div>
     <div class="line sub-line"><span>女生收入</span><span id="girlIncome">¥0</span></div>
 
-    <hr class="divider">
+    </section>
 
+    <section class="bill-section cost-section">
     <div class="bill-group-label">成本</div>
     <div class="line"><span>场地费</span><span id="siteTotal">¥0</span></div>
     <div class="line"><span>羽毛球费用</span><span id="ballTotal">¥0</span></div>
     <div class="line"><span>其他费用</span><span id="otherTotal">¥0</span></div>
     <div class="line total"><span>总成本</span><span id="cost">¥0</span></div>
 
+    </section>
+    <div class="bill-footer">
     <div class="profit-box" id="profitBox">
       <span class="label" id="profitLabel">净利润</span>
       <span class="value" id="profit">¥0</span>
     </div>
 
     <div class="tip" id="tip"></div>
+    </div>
   </div>
 
 </div>
