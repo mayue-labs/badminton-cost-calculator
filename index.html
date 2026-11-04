@@ -52,14 +52,15 @@
     flex-direction: column;
     background: #fffdf7;
     border-radius: 0 18px 18px 0;
-    padding: 28px 30px 24px;
+    padding: 28px;
   }
 
   h1 { font-size: 19px; margin: 0 0 4px; color: #1f2937; }
   .sub { font-size: 12.5px; color: #9ca3af; margin-bottom: 18px; }
 
-  /* 输入区：统一 4 列，保证输入框等宽、左对齐 */
-  .row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+  /* 按字段数量排满整行，使输入区左右留白与账单一致。 */
+  .row { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+  .row.three-fields { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 
   .field { margin-bottom: 6.5px; min-width: 0; }
   label {
@@ -187,7 +188,7 @@
   }
   /* 输入框在小屏折成 2 列 */
   @media (max-width: 520px) {
-    .row { grid-template-columns: 1fr 1fr; }
+    .row, .row.three-fields { grid-template-columns: repeat(2, minmax(0, 1fr)); }
     .panel, .panel.bill { padding: 24px 20px; }
   }
 
@@ -235,7 +236,7 @@
 
     <section class="input-section">
     <div class="section-title">场地与用球</div>
-    <div class="row">
+    <div class="row three-fields">
       <div class="field">
         <label>场地费(元/片/时)</label>
         <input type="number" id="siteRate" value="60" min="0" step="1">
