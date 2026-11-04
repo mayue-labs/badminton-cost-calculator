@@ -58,8 +58,8 @@
   h1 { font-size: 19px; margin: 0 0 4px; color: #1f2937; }
   .sub { font-size: 12.5px; color: #9ca3af; margin-bottom: 18px; }
 
-  /* 按字段数量排满整行，使输入区左右留白与账单一致。 */
-  .row { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+  /* 所有输入框采用场地费单价的列宽，两项行也保持三列轨道。 */
+  .row { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
   .row.three-fields { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 
   .field { margin-bottom: 6.5px; min-width: 0; }
