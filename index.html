@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>羽毛球活动盈亏计算器</title>
+<style>
+  * { box-sizing: border-box; }
+
+  :root {
+    --court-green: #1a7f4e;      /* 卡片内强调色 */
+    --court-green-dark: #0e5c38;
+  }
+
+  body {
+    margin: 0;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    /* 深灰背景 */
+    background: #1E1E1F;
+    font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;
+    padding: 24px 20px;
+  }
+
+  /* 左右两栏：默认 stretch，让两张卡片等高 */
+  .wrap {
+    width: 100%;
+    max-width: 900px;
+    display: grid;
+    grid-template-columns: 1.15fr 1fr;
+    gap: 20px;
+    align-items: stretch;
+  }
+
+  .panel {
+    background: #fff;
+    border-radius: 18px;
+    padding: 24px;
+    /* 深色背景上加深阴影，突出卡片 */
+    box-shadow: 0 20px 50px rgba(0, 0, 0, .5);
+  }
+
+  /* 右侧账单卡片用纵向 flex，方便把提示沉到底部 */
+  .panel.bill {
+    display: flex;
+    flex-direction: column;
+  }
+
+  h1 { font-size: 19px; margin: 0 0 4px; color: #1f2937; }
+  .sub { font-size: 12.5px; color: #9ca3af; margin-bottom: 18px; }
+
+  /* 输入区：统一 4 列，保证输入框等宽、左对齐 */
+  .row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+
+  .field { margin-bottom: 13px; min-width: 0; }
+  label {
+    display: block;
+    font-size: 12px;
+    color: #555;
+    margin-bottom: 6px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  input {
+    width: 100%;
+    padding: 10px 8px;
+    border: 1px solid #d9dce3;
+    border-radius: 10px;
+    font-size: 15px;
+    text-align: center;
+    outline: none;
+    transition: .18s;
+    background: #fafbfc;
+    -moz-appearance: textfield;
+  }
+  input::-webkit-outer-spin-button,
+  input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+  input:focus {
+    border-color: var(--court-green);
+    background: #fff;
+    box-shadow: 0 0 0 3px rgba(26, 127, 78, .18);
+  }
+  .section-title {
+    font-size: 12.5px;
+    font-weight: 600;
+    color: var(--court-green);
+    letter-spacing: .5px;
+    margin: 4px 0 10px;
+  }
+
+  /* 账单区 */
+  .bill-title {
+    font-size: 15px;
+    font-weight: 700;
+    color: #1f2937;
+    margin: 0 0 4px;
+  }
+  .bill-sub {
+    font-size: 12px;
+    color: #9ca3af;
+    margin-bottom: 16px;
+  }
+  .bill-group-label {
+    font-size: 11.5px;
+    font-weight: 600;
+    color: var(--court-green);
+    letter-spacing: .5px;
+    margin: 14px 0 6px;
+  }
+  .bill-group-label:first-of-type { margin-top: 0; }
+
+  .line {
+    display: flex;
+    justify-content: space-between;
+    font-size: 14px;
+    color: #6b7280;
+    padding: 5px 0;
+  }
+  .line span:last-child { color: #374151; font-weight: 500; }
+  .line.sub-line { font-size: 13px; color: #9ca3af; }
+  .line.sub-line span:last-child { font-weight: 400; color: #6b7280; }
+  .line.total {
+    border-top: 1px solid #f0f1f4;
+    margin-top: 6px;
+    padding-top: 10px;
+    color: #374151;
+    font-weight: 600;
+  }
+  .line.total span:last-child { font-weight: 700; }
+  .divider { border: none; border-top: 1px dashed #e5e7eb; margin: 12px 0; }
+
+  .profit-box {
+    margin-top: 16px;
+    border-radius: 12px;
+    padding: 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #ecfdf5;
+    transition: .2s;
+  }
+  .profit-box.loss { background: #fef2f2; }
+  .profit-box .label { font-size: 15px; color: #047857; font-weight: 600; }
+  .profit-box.loss .label { color: #b91c1c; }
+  .profit-box .value { font-size: 24px; font-weight: 700; color: #059669; }
+  .profit-box.loss .value { color: #dc2626; }
+
+  /* 提示沉到卡片底部，使右侧内容在等高时分布自然 */
+  .tip {
+    margin-top: auto;
+    padding-top: 12px;
+    font-size: 12.5px;
+    color: #9ca3af;
+    text-align: center;
+    line-height: 1.6;
+  }
+
+  /* 窄屏：左右变上下，恢复按内容高度 */
+  @media (max-width: 780px) {
+    .wrap {
+      grid-template-columns: 1fr;
+      max-width: 560px;
+      align-items: start;
+    }
+  }
+  /* 输入框在小屏折成 2 列 */
+  @media (max-width: 520px) {
+    .row { grid-template-columns: 1fr 1fr; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- ===== 左：输入区 ===== -->
+  <div class="panel">
+    <h1>羽毛球活动盈亏计算器</h1>
+    <div class="sub">输入数字，右侧自动生成账单</div>
+
+    <div class="section-title">场地与用球</div>
+    <div class="row">
+      <div class="field">
+        <label>场地费(元/片/时)</label>
+        <input type="number" id="siteRate" value="60" min="0" step="1">
+      </div>
+      <div class="field">
+        <label>场地片数(片)</label>
+        <input type="number" id="courts" value="1" min="0" step="1">
+      </div>
+      <div class="field">
+        <label>时长(小时)</label>
+        <input type="number" id="hours" value="3" min="0" step="0.5">
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="field">
+        <label>羽毛球费用(元)</label>
+        <input type="number" id="ball" value="300" min="0" step="1">
+      </div>
+      <div class="field">
+        <label>其他费用(元)</label>
+        <input type="number" id="other" value="0" min="0" step="1">
+      </div>
+    </div>
+
+    <div class="section-title">收费与人数</div>
+    <div class="row">
+      <div class="field">
+        <label>男生人数</label>
+        <input type="number" id="boys" value="12" min="0" step="1">
+      </div>
+      <div class="field">
+        <label>男生收费</label>
+        <input type="number" id="boyPrice" value="50" min="0" step="1">
+      </div>
+    </div>
+    <div class="row">
+      <div class="field">
+        <label>女生人数</label>
+        <input type="number" id="girls" value="8" min="0" step="1">
+      </div>
+      <div class="field">
+        <label>女生收费</label>
+        <input type="number" id="girlPrice" value="40" min="0" step="1">
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== 右：账单区 ===== -->
+  <div class="panel bill">
+    <div class="bill-title">活动账单</div>
+    <div class="bill-sub">根据左侧输入实时计算</div>
+
+    <div class="bill-group-label">收入</div>
+    <div class="line"><span>总收入</span><span id="income">¥0</span></div>
+    <div class="line sub-line"><span>男生收入</span><span id="boyIncome">¥0</span></div>
+    <div class="line sub-line"><span>女生收入</span><span id="girlIncome">¥0</span></div>
+
+    <hr class="divider">
+
+    <div class="bill-group-label">成本</div>
+    <div class="line"><span>场地费</span><span id="siteTotal">¥0</span></div>
+    <div class="line"><span>羽毛球费用</span><span id="ballTotal">¥0</span></div>
+    <div class="line"><span>其他费用</span><span id="otherTotal">¥0</span></div>
+    <div class="line total"><span>总成本</span><span id="cost">¥0</span></div>
+
+    <div class="profit-box" id="profitBox">
+      <span class="label" id="profitLabel">净利润</span>
+      <span class="value" id="profit">¥0</span>
+    </div>
+
+    <div class="tip" id="tip"></div>
+  </div>
+
+</div>
+
+<script>
+  const ids = ['siteRate', 'courts', 'hours', 'ball', 'other',
+               'boys', 'boyPrice', 'girls', 'girlPrice'];
+  const $ = id => document.getElementById(id);
+
+  function num(id) {
+    const v = parseFloat($(id).value);
+    return isNaN(v) ? 0 : v;
+  }
+
+  function fmt(n) {
+    const sign = n < 0 ? '-' : '';
+    const abs = Math.round(Math.abs(n) * 100) / 100;
+    return sign + '¥' + abs.toLocaleString('zh-CN', { maximumFractionDigits: 2 });
+  }
+
+  function calc() {
+    const siteTotal = num('siteRate') * num('courts') * num('hours');
+    const ballTotal = num('ball');
+    const otherTotal = num('other');
+
+    const boys = num('boys');
+    const boyPrice = num('boyPrice');
+    const girls = num('girls');
+    const girlPrice = num('girlPrice');
+
+    const boyIncome = boys * boyPrice;
+    const girlIncome = girls * girlPrice;
+    const income = boyIncome + girlIncome;
+
+    const cost = siteTotal + ballTotal + otherTotal;
+    const profit = income - cost;
+    const totalPeople = boys + girls;
+
+    $('income').textContent = fmt(income);
+    $('boyIncome').textContent = fmt(boyIncome);
+    $('girlIncome').textContent = fmt(girlIncome);
+    $('siteTotal').textContent = fmt(siteTotal);
+    $('ballTotal').textContent = fmt(ballTotal);
+    $('otherTotal').textContent = fmt(otherTotal);
+    $('cost').textContent = fmt(cost);
+    $('profit').textContent = fmt(profit);
+
+    const box = $('profitBox');
+    const label = $('profitLabel');
+    if (profit > 0) {
+      box.classList.remove('loss');
+      label.textContent = '净利润（赚钱）';
+    } else if (profit < 0) {
+      box.classList.add('loss');
+      label.textContent = '净亏损（亏钱）';
+    } else {
+      box.classList.remove('loss');
+      label.textContent = '净利润（不赚不亏）';
+    }
+
+    // 保本提示：按总人数平均收费衡量
+    let tip = '';
+    if (totalPeople > 0 && cost > 0) {
+      const breakEven = cost / totalPeople;
+      const avgPrice = income / totalPeople;
+      tip = `共 ${totalPeople} 人 · 保本平均每人需收 ${fmt(breakEven)}（当前平均 ${fmt(avgPrice)}）`;
+      if (profit < 0) {
+        tip += ` · 平均每人再提高 ${fmt(breakEven - avgPrice)} 才回本`;
+      }
+    } else if (cost > 0 && totalPeople === 0) {
+      tip = '人数为 0，没有收入';
+    }
+    $('tip').textContent = tip;
+  }
+
+  ids.forEach(id => $(id).addEventListener('input', calc));
+  calc();
+</script>
+</body>
+</html>
