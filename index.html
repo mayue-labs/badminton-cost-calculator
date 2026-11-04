@@ -178,7 +178,7 @@
   <!-- ===== 左：输入区 ===== -->
   <div class="panel">
     <h1>羽毛球活动盈亏计算器</h1>
-    <div class="sub">输入数字，右侧自动生成账单</div>
+    <div class="sub">输入数字，右侧自动生成账单；自动记住本次填写</div>
 
     <div class="section-title">场地与用球</div>
     <div class="row">
@@ -329,7 +329,38 @@
     $('tip').textContent = tip;
   }
 
-  ids.forEach(id => $(id).addEventListener('input', calc));
+  const storageKey = 'badminton-cost-calculator:inputs:v1';
+
+  function restoreInputs() {
+    try {
+      const saved = JSON.parse(localStorage.getItem(storageKey));
+      if (!saved || typeof saved !== 'object' || Array.isArray(saved)) return;
+      ids.forEach(id => {
+        const value = saved[id];
+        if (typeof value === 'string' &&
+            (value === '' || (value.trim() !== '' && Number.isFinite(Number(value))))) {
+          $(id).value = value;
+        }
+      });
+    } catch (_) {
+      // 存储被禁用或数据损坏时，仍然可以正常计算。
+    }
+  }
+
+  function saveInputs() {
+    try {
+      const values = Object.fromEntries(ids.map(id => [id, $(id).value]));
+      localStorage.setItem(storageKey, JSON.stringify(values));
+    } catch (_) {
+      // 存储空间不足或被禁用时，不影响账单计算。
+    }
+  }
+
+  restoreInputs();
+  ids.forEach(id => $(id).addEventListener('input', () => {
+    calc();
+    saveInputs();
+  }));
   calc();
 </script>
 </body>
